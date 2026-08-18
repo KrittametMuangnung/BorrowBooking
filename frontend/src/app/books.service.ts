@@ -1,14 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { Book } from './book.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BooksService {
-  private readonly apiBaseUrl = 'http://localhost:3100';
+  private readonly apiBaseUrl = typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:3100'
+    : '/api';
   private readonly staticBooks: Book[] = [
     { id: 1, title: 'Nightmare Error', category: 'novel', price: 30, available: true, imageUrl: '/books/NightmareError.png', igUrl: 'https://www.instagram.com/my_little_shelf_/' },
     { id: 2, title: 'คดีฆาตกรรมในคฤหาสน์กังหันทดน้ำ', category: 'novel', price: 35, available: true, imageUrl: '/books/คดีฆาตกรรมในคฤหาสน์กังหันทดน้ำ.png', igUrl: 'https://www.instagram.com/my_little_shelf_/' },
@@ -20,19 +22,15 @@ export class BooksService {
   constructor(private readonly http: HttpClient) {}
 
   getBooks(available?: boolean): Observable<Book[]> {
-    // Cloudflare Pages serves the frontend statically. Use the real catalog
-    // bundled with the site when no local API is available.
-    if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
-      return of(this.filterBooks(available));
-    }
-
     let params = new HttpParams();
 
     if (available !== undefined) {
       params = params.set('available', String(available));
     }
 
-    return this.http.get<Book[]>(`${this.apiBaseUrl}/books`, { params });
+    return this.http.get<Book[]>(`${this.apiBaseUrl}/books`, { params }).pipe(
+      catchError(() => of(this.filterBooks(available)))
+    );
   }
 
   private filterBooks(available?: boolean): Book[] {
