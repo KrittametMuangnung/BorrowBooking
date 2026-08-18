@@ -1,3 +1,6 @@
+@if (isAdmin) {
+  <app-admin />
+} @else {
 <main class="min-h-screen bg-[radial-gradient(circle_at_top,_#fffaf0_0%,_#f4ede3_48%,_#ffffff_100%)] px-4 py-8 text-stone-800 sm:px-6">
   <section class="mx-auto w-full max-w-6xl">
     <header class="relative overflow-hidden rounded-3xl border border-stone-200 bg-white/85 p-6 shadow-lg shadow-stone-300/40 backdrop-blur md:p-8">
@@ -141,3 +144,4 @@
     </section>
   </section>
 </main>
+}

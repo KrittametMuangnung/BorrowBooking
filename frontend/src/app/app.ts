@@ -1,13 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Book } from './book.model';
 import { BooksService } from './books.service';
+import { AdminComponent } from './admin.component';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
+  imports: [AdminComponent]
 })
 export class App implements OnInit {
+  readonly isAdmin = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
   books: Book[] = [];
   availabilityFilter: 'all' | 'available' | 'unavailable' = 'available';
   loading = false;
