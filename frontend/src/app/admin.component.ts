@@ -13,6 +13,7 @@ export class AdminComponent {
   books: Book[] = [];
   editing: Partial<Book> = { title: '', category: 'novel', price: 0, available: true, imageUrl: '', igUrl: '' };
   isEditing = false;
+  showForm = false;
   message = '';
   error = '';
   selectedImage?: File;
@@ -23,8 +24,9 @@ export class AdminComponent {
     this.http.get<Book[]>('/api/books').subscribe({ next: (books) => this.books = books, error: () => this.error = 'โหลดข้อมูลไม่สำเร็จ' });
   }
 
-  edit(book: Book): void { this.editing = { ...book }; this.isEditing = true; this.selectedImage = undefined; this.message = ''; }
-  cancel(): void { this.isEditing = false; this.selectedImage = undefined; }
+  edit(book: Book): void { this.editing = { ...book }; this.isEditing = true; this.showForm = true; this.selectedImage = undefined; this.message = ''; }
+  startNew(): void { this.editing = { title: '', category: 'novel', price: 0, available: true, imageUrl: '', igUrl: '' }; this.isEditing = false; this.showForm = true; this.selectedImage = undefined; this.message = ''; this.error = ''; }
+  cancel(): void { this.showForm = false; this.isEditing = false; this.selectedImage = undefined; }
   chooseImage(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedImage = input.files?.[0];
@@ -37,6 +39,7 @@ export class AdminComponent {
         : this.http.post<Book>('/api/admin/books', this.editing);
       request.subscribe({ next: () => { this.message = 'บันทึกเรียบร้อย'; this.isEditing = false; this.selectedImage = undefined; this.load(); }, error: () => this.error = 'บันทึกไม่สำเร็จ' });
     };
+    if (!this.selectedImage && !this.editing.id) { this.error = 'กรุณาเลือกไฟล์รูปปกจากเครื่อง'; return; }
     if (!this.selectedImage) { persist(); return; }
     const form = new FormData();
     form.append('file', this.selectedImage);
