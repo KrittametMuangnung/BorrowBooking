@@ -1,3 +1,43 @@
 @import url("tailwindcss");
 
-/* You can add global styles to this file, and also import other style files */
+/* Cross-platform baseline: predictable sizing, readable Thai text and safe-area support. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: #f5eee3;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  font-family: "Noto Sans Thai", "Leelawadee UI", Tahoma, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button,
+a,
+select,
+input[type="checkbox"],
+input[type="file"] {
+  touch-action: manipulation;
+}
+
+@media (max-width: 640px) {
+  button,
+  a {
+    min-height: 42px;
+  }
+}
