@@ -17,6 +17,7 @@ export class AdminComponent {
   message = '';
   error = '';
   selectedImage?: File;
+  imagePreview = '';
 
   constructor(private readonly http: HttpClient) { this.load(); }
 
@@ -24,12 +25,13 @@ export class AdminComponent {
     this.http.get<Book[]>('/api/books').subscribe({ next: (books) => this.books = books, error: () => this.error = 'โหลดข้อมูลไม่สำเร็จ' });
   }
 
-  edit(book: Book): void { this.editing = { ...book }; this.isEditing = true; this.showForm = true; this.selectedImage = undefined; this.message = ''; }
-  startNew(): void { this.editing = { title: '', category: 'novel', price: 0, available: true, imageUrl: '', igUrl: '' }; this.isEditing = false; this.showForm = true; this.selectedImage = undefined; this.message = ''; this.error = ''; }
-  cancel(): void { this.showForm = false; this.isEditing = false; this.selectedImage = undefined; }
+  edit(book: Book): void { this.editing = { ...book }; this.isEditing = true; this.showForm = true; this.selectedImage = undefined; this.imagePreview = book.imageUrl || ''; this.message = ''; }
+  startNew(): void { this.editing = { title: '', category: 'novel', price: 0, available: true, imageUrl: '', igUrl: '' }; this.isEditing = false; this.showForm = true; this.selectedImage = undefined; this.imagePreview = ''; this.message = ''; this.error = ''; }
+  cancel(): void { this.showForm = false; this.isEditing = false; this.selectedImage = undefined; this.imagePreview = ''; }
   chooseImage(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedImage = input.files?.[0];
+    if (this.selectedImage) this.imagePreview = URL.createObjectURL(this.selectedImage);
   }
 
   save(): void {
